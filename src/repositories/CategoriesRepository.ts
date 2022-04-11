@@ -9,7 +9,7 @@ class CategoriesRepository implements ICategoriesRepository {
     constructor() {
         this.repository = AppDataSource.getRepository(Category);
     }
-
+    
     async create({ name, description }: ICreateCategoryDTO): Promise<Category> {
         const category = this.repository.create({
             name,
@@ -23,11 +23,31 @@ class CategoriesRepository implements ICategoriesRepository {
         const categories = await this.repository.find();
         return categories;
     }
-
+    
     async findByName(name: string): Promise<Category> {
         const category = await this.repository.findOneBy({name})
         return category;
     }
+
+    async delete(id: string): Promise<void>
+    {
+        await this.repository.delete(id);
+    }
+    
+    async findById(id: string): Promise<Category>
+    {
+        const category = await this.repository.findOneBy({id});
+        return category;
+    }
+
+    async update(id: string, name: string, description: string): Promise<Category> {
+        const category = await this.repository.findOneBy({id});
+        category.name = name ? name : category.name;
+        category.description = description ? description : category.description;
+        await this.repository.update(id, category);
+        return category;
+    }
+
 }
 
 export { CategoriesRepository };
